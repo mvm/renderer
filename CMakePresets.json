@@ -2,8 +2,8 @@
     "version": 2,
     "configurePresets": [
       {
-        "name": "linux-dynamic",
-        "displayName": "Linux x64 Dynamic Build",
+        "name": "build",
+        "displayName": "Debug Build",
         "generator": "Ninja",
         "binaryDir": "${sourceDir}/build",
         "cacheVariables": {

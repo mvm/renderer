@@ -1,7 +1,16 @@
 #include <stdio.h>
 #include <SDL.h>
+#ifdef WIN32
+#include <windows.h>
+#endif
 
-int main() {
+#ifdef WIN32
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+    PSTR lpCmdLine, int nCmdShow)
+#else
+int main()
+#endif
+{
     SDL_Window *window;
     SDL_Surface *render_surface;
     SDL_Renderer *renderer;

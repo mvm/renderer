@@ -4,8 +4,9 @@
 int main() {
     SDL_Window *window;
     SDL_Surface *render_surface;
+    SDL_Renderer *renderer;
 
-    int err = SDL_Init(SDL_INIT_VIDEO);
+    int err = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
     if(err < 0) {
         printf("Error initializing SDL: %s\n", SDL_GetError());
         return 1;
@@ -19,6 +20,7 @@ int main() {
     }
 
     render_surface = SDL_GetWindowSurface(window);
+    renderer = SDL_GetRenderer(window);
 
     Uint64 start_time = SDL_GetTicks64();
     unsigned int quit = 0;
@@ -26,8 +28,16 @@ int main() {
     do {
         Uint64 now = SDL_GetTicks64();
 
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+        SDL_RenderDrawLine(renderer, -50, 720, 1000, 526);
+        SDL_RenderDrawLine(renderer, 200, 200, 600, 600);
+
         if((now - start_time > 5*1000)) break;
-        SDL_UpdateWindowSurface(window);
+        SDL_RenderPresent(renderer);
     } while(1);
 
     SDL_DestroyWindow(window);

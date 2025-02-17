@@ -5,6 +5,9 @@
 #include <windows.h>
 #endif
 
+#define WIDTH 1280
+#define HEIGHT 720
+
 #ifdef WIN32
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     PSTR lpCmdLine, int nCmdShow)
@@ -22,7 +25,7 @@ int main()
         return 1;
     }
 
-    window = SDL_CreateWindow("Renderer", 0, 0, 1280, 720, 0);
+    window = SDL_CreateWindow("Renderer", 0, 0, WIDTH, HEIGHT, 0);
     if(window == NULL) {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "can't create a window: %s", SDL_GetError());
         SDL_Quit();
@@ -34,6 +37,10 @@ int main()
 
     Uint64 start_time = SDL_GetTicks64();
     unsigned int quit = 0;
+    bool saved = false;
+
+    SDL_Surface *screen_sfc = SDL_CreateRGBSurfaceWithFormat(0, WIDTH, HEIGHT,
+        32, SDL_PIXELFORMAT_RGBA32);
 
     do {
         Uint64 now = SDL_GetTicks64();
@@ -46,9 +53,22 @@ int main()
         SDL_RenderDrawLine(renderer, -50, 720, 1000, 526);
         SDL_RenderDrawLine(renderer, 200, 200, 600, 600);
 
+        if(!saved) {
+           int err = SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_RGBA32,
+                screen_sfc->pixels, screen_sfc->pitch);
+            
+            if(err) {
+                std::cout << "error reading pixels: " << SDL_GetError() << std::endl;
+            }
+            saved = true;
+        }
+
         if((now - start_time > 5*1000)) break;
         SDL_RenderPresent(renderer);
     } while(1);
+
+    SDL_SaveBMP(screen_sfc, "out.bmp");
+    std::cout << "saved renderer output to image out.bmp" << std::endl;
 
     SDL_DestroyWindow(window);
     SDL_Quit();

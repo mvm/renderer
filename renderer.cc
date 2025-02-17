@@ -1,4 +1,5 @@
-#include <stdio.h>
+#include <iostream>
+#include <cstdio>
 #include <SDL.h>
 #ifdef WIN32
 #include <windows.h>

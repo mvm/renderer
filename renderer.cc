@@ -73,6 +73,20 @@ void draw_line(SDL_Renderer *renderer, Uint32 color, int _x1, int _y1, int _x2, 
     }
 }
 
+int save_screen(SDL_Renderer *renderer, const char *fnout)
+{
+    if(fnout == nullptr)
+        return -1;
+
+    SDL_Surface *screenshotSfc =
+        SDL_CreateRGBSurfaceWithFormat(0, WIDTH, HEIGHT, 32, SDL_PIXELFORMAT_RGBA32);
+    SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_RGBA32,
+        screenshotSfc->pixels, screenshotSfc->pitch);
+    SDL_SaveBMP(screenshotSfc, fnout);
+    SDL_FreeSurface(screenshotSfc);
+    return 0;
+}
+
 #ifdef WIN32
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     PSTR lpCmdLine, int nCmdShow)
@@ -116,16 +130,12 @@ int main()
         draw_line(renderer, -1, WIDTH, HEIGHT/2 - 30, 0, HEIGHT/2 + 30);
         
         draw_line(renderer, -1, WIDTH/2, -50, WIDTH/2, HEIGHT + 50);
+        draw_line(renderer, -1, WIDTH + 50, HEIGHT/2, -50, HEIGHT/2);
 
         SDL_RenderPresent(renderer);
     }
 
-    SDL_Surface *screenshotSfc =
-        SDL_CreateRGBSurfaceWithFormat(0, WIDTH, HEIGHT, 32, SDL_PIXELFORMAT_RGBA32);
-    SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_RGBA32,
-        screenshotSfc->pixels, screenshotSfc->pitch);
-    SDL_SaveBMP(screenshotSfc, "out.bmp");
-    SDL_FreeSurface(screenshotSfc);
+    save_screen(renderer, "out.bmp");
 
     SDL_DestroyWindow(window);
     SDL_Quit();

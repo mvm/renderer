@@ -120,6 +120,13 @@ int main()
         SDL_RenderPresent(renderer);
     }
 
+    SDL_Surface *screenshotSfc =
+        SDL_CreateRGBSurfaceWithFormat(0, WIDTH, HEIGHT, 32, SDL_PIXELFORMAT_RGBA32);
+    SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_RGBA32,
+        screenshotSfc->pixels, screenshotSfc->pitch);
+    SDL_SaveBMP(screenshotSfc, "out.bmp");
+    SDL_FreeSurface(screenshotSfc);
+
     SDL_DestroyWindow(window);
     SDL_Quit();
     return 0;

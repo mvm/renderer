@@ -8,6 +8,13 @@
 #define WIDTH 1280
 #define HEIGHT 720
 
+bool quit = false;
+
+void handle_events(SDL_Event *event) {
+    if(event->type == SDL_QUIT)
+        quit = true;
+}
+
 #ifdef WIN32
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     PSTR lpCmdLine, int nCmdShow)
@@ -32,43 +39,20 @@ int main()
         return 1;
     }
 
-    render_surface = SDL_GetWindowSurface(window);
-    renderer = SDL_GetRenderer(window);
+    SDL_Surface *sfc = SDL_GetWindowSurface(window);
 
-    Uint64 start_time = SDL_GetTicks64();
-    unsigned int quit = 0;
-    bool saved = false;
+    Uint64 ticks = SDL_GetTicks64();
+    SDL_Event event;
 
-    SDL_Surface *screen_sfc = SDL_CreateRGBSurfaceWithFormat(0, WIDTH, HEIGHT,
-        32, SDL_PIXELFORMAT_RGBA32);
+    while(!quit) {
 
-    do {
-        Uint64 now = SDL_GetTicks64();
-
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderClear(renderer);
-
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-
-        SDL_RenderDrawLine(renderer, -50, 720, 1000, 526);
-        SDL_RenderDrawLine(renderer, 200, 200, 600, 600);
-
-        if(!saved) {
-           int err = SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_RGBA32,
-                screen_sfc->pixels, screen_sfc->pitch);
-            
-            if(err) {
-                std::cout << "error reading pixels: " << SDL_GetError() << std::endl;
-            }
-            saved = true;
+        while(SDL_PollEvent(&event)) {
+            handle_events(&event);
         }
+        
+        SDL_UpdateWindowSurface(window);
 
-        if((now - start_time > 5*1000)) break;
-        SDL_RenderPresent(renderer);
-    } while(1);
-
-    SDL_SaveBMP(screen_sfc, "out.bmp");
-    std::cout << "saved renderer output to image out.bmp" << std::endl;
+    }
 
     SDL_DestroyWindow(window);
     SDL_Quit();

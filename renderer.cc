@@ -58,6 +58,8 @@ void draw_line(SDL_Renderer *renderer, Uint32 color, int _x1, int _y1, int _x2, 
         slope = (x2 - x1) / (float)(y2 - y1);
     }
     
+    SDL_assert(abs(slope) < 1);
+
     if(flip_axis) {
         SDL_assert(y1 < y2);
         for(int y = y1; y < y2; y++) {
